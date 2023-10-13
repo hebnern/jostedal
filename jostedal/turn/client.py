@@ -138,7 +138,7 @@ class TurnUdpClient(StunUdpClient):
                 transaction.fail(TransactionError(error_code))
 
     def _stun_refresh_success(self, msg, addr):
-        self._stun_unhandeled(msg, addr)
+        self._stun_unhandled(msg, addr)
 
     def _stun_refresh_error(self, msg, addr):
         # If time_to_expiry == 0 and error 437 (Allocation Mismatch)
@@ -146,4 +146,4 @@ class TurnUdpClient(StunUdpClient):
         self.errback(msg.format())
 
     def _stun_data_indication(self, msg, addr):
-        self._stun_unhandeled(msg, addr)
+        self._stun_unhandled(msg, addr)

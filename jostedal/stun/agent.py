@@ -52,8 +52,7 @@ class StunUdpProtocol(DatagramProtocol):
                 if isinstance(msg, Message):
                     self._stun_received(msg, addr)
         else:
-            logger.warning("Unknown message in datagram from %s:%d:", *addr)
-            logger.debug(datagram.hex())
+            self._stun_unhandled_datagram(datagram, addr)
 
     def _stun_received(self, msg, addr):
         handler = self._handlers.get((msg.msg_method, msg.msg_class))
@@ -65,21 +64,25 @@ class StunUdpProtocol(DatagramProtocol):
             logger.info("%s Received unrecognized STUN", self)
             logger.debug(msg.format())
 
-    def _stun_unhandeled(self, msg, addr):
+    def _stun_unhandled_datagram(self, datagram, addr):
+        logger.warning("Unknown message in datagram from %s:%d:", *addr)
+        logger.debug(datagram.hex())
+
+    def _stun_unhandled(self, msg, addr):
         logger.warning("%s Unhandeled message from %s:%d", self, *addr)
         logger.debug(msg.format())
 
     def _stun_binding_request(self, msg, addr):
-        self._stun_unhandeled(msg, addr)
+        self._stun_unhandled(msg, addr)
 
     def _stun_binding_indication(self, msg, addr):
-        self._stun_unhandeled(msg, addr)
+        self._stun_unhandled(msg, addr)
 
     def _stun_binding_success(self, msg, addr):
-        self._stun_unhandeled(msg, addr)
+        self._stun_unhandled(msg, addr)
 
     def _stun_binding_error(self, msg, addr):
-        self._stun_unhandeled(msg, addr)
+        self._stun_unhandled(msg, addr)
 
 
 class Message(bytearray):

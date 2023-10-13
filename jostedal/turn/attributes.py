@@ -9,15 +9,16 @@ class ChannelNumber(Attribute):
     :see: http://tools.ietf.org/html/rfc5766#section-14.1
     """
 
+    type = turn.ATTR_CHANNEL_NUMBER
+    _struct = struct.Struct('>H2x')
+
     def __init__(self, data, channel_number):
         self.channel_number = channel_number
 
     @classmethod
     def from_buffer(cls, data, offset, length):
-        channel_number = struct.unpack_from(">H2x", data, offset)
+        channel_number, = cls._struct.unpack_from(data, offset)
         return cls(memoryview(data)[offset : offset + length], channel_number)
-
-    type = turn.ATTR_CHANNEL_NUMBER
 
 
 @attribute
