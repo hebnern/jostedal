@@ -54,30 +54,18 @@ class TurnUdpServer(StunUdpServer):
         # 1. require request to be authenticated
         message_integrity = msg.get_attr(stun.ATTR_MESSAGE_INTEGRITY)
         if not message_integrity:
-            response = msg.create_response(stun.CLASS_RESPONSE_ERROR)
-            response.add_attr(ErrorCode, *stun.ERR_UNAUTHORIZED)
-            self.respond(response, addr)
-            return
+            raise stun.UnauthorizedError()
 
         # 2. Check if the 5-tuple is currently in use
         if relay_allocation:
-            response = msg.create_response(stun.CLASS_RESPONSE_ERROR)
-            response.add_attr(ErrorCode, *turn.ERR_ALLOCATION_MISMATCH)
-            self.respond(response, addr)
-            return
+            raise turn.AllocationMismatchError()
 
         # 3. Check REQUESTED-TRANSPORT attribute
         requested_transport = msg.get_attr(turn.ATTR_REQUESTED_TRANSPORT)
         if not requested_transport:
-            response = msg.create_response(stun.CLASS_RESPONSE_ERROR)
-            response.add_attr(ErrorCode, *stun.ERR_BAD_REQUEST)
-            self.respond(response, addr)
-            return
+            raise stun.BadRequestError()
         elif requested_transport.protocol != turn.TRANSPORT_UDP:
-            response = msg.create_response(stun.CLASS_RESPONSE_ERROR)
-            response.add_attr(ErrorCode, *turn.ERR_UNSUPPORTED_TRANSPORT_PROTOCOL)
-            self.respond(response, addr)
-            return
+            raise turn.UnsupportedTransportProtocolError()
 
         # 4. handle DONT-FRAGMENT attribute
 
@@ -161,10 +149,7 @@ class TurnUdpServer(StunUdpServer):
         # 1. require request to be authenticated
         message_integrity = msg.get_attr(stun.ATTR_MESSAGE_INTEGRITY)
         if not message_integrity:
-            response = msg.create_response(stun.CLASS_RESPONSE_ERROR)
-            response.add_attr(ErrorCode, *stun.ERR_UNAUTHORIZED)
-            self.respond(response, addr)
-            return
+            raise stun.UnauthorizedError()
 
         relay = self._relays[addr]
         peer_addr = msg.get_attr(turn.ATTR_XOR_PEER_ADDRESS)
@@ -189,10 +174,7 @@ class TurnUdpServer(StunUdpServer):
         # 1. require request to be authenticated
         message_integrity = msg.get_attr(stun.ATTR_MESSAGE_INTEGRITY)
         if not message_integrity:
-            response = msg.create_response(stun.CLASS_RESPONSE_ERROR)
-            response.add_attr(ErrorCode, *stun.ERR_UNAUTHORIZED)
-            self.respond(response, addr)
-            return
+            raise stun.UnauthorizedError()
 
         # 2. require CHANNEL-NUMBER and XOR-PEER-ADDRESS attributes
         # 3. require channel number is in valid range (0x4000 - 0x4FFF inclusive)

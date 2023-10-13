@@ -1,3 +1,5 @@
+from jostedal import stun
+
 MSG_CHANNEL = 0b01
 
 
@@ -24,9 +26,26 @@ TRANSPORT_UDP = 0x11
 
 
 # Error codes (class, number) and recommended reason phrases:
-ERR_FORBIDDEN = 4, 3, "Forbidden"
-ERR_ALLOCATION_MISMATCH = 4, 37, "Allocation Mismatch"
-ERR_WRONG_CREDENTIALS = 4, 41, "Wrong Credentials"
-ERR_UNSUPPORTED_TRANSPORT_PROTOCOL = 4, 42, "Unsupported Transport Protocol"
-ERR_ALLOCATION_QUOTA_REACHED = 4, 86, "Allocation Quota Reached"
-ERR_INSUFFICIENT_CAPACITY = 5, 8, "Insufficient Capacity"
+class ForbiddenError(stun.Error):
+    error_code = 403
+    reason = "Forbidden"
+
+class AllocationMismatchError(stun.Error):
+    error_code = 437
+    reason = "Allocation Mismatch"
+
+class WrongCredentialsError(stun.Error):
+    error_code = 441
+    reason = "Wrong Credentials"
+
+class UnsupportedTransportProtocolError(stun.Error):
+    error_code = 442
+    reason = "Unsupported Transport Protocol"
+
+class AllocationQuotaReachedError(stun.Error):
+    error_code = 486
+    reason = "Allocation Quota Reached"
+
+class InsufficientCapacityError(stun.Error):
+    error_code = 508
+    reason = "Insufficient Capacity"

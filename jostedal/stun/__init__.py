@@ -52,10 +52,51 @@ IGNORED_ATTRS = [
     ATTR_REFLECTED_FROM,
 ]
 
-# Error codes (class, number) and recommended reason phrases:
-ERR_TRY_ALTERNATE = 3, 0, "Try Alternate"
-ERR_BAD_REQUEST = 4, 0, "Bad Request"
-ERR_UNAUTHORIZED = 4, 1, "Unauthorized"
-ERR_UNKNOWN_ATTRIBUTE = 4, 20, "Unknown Attribute"
-ERR_STALE_NONCE = 4, 38, "Stale Nonce"
-ERR_SERVER_ERROR = 5, 0, "Server Error"
+class Error(BaseException):
+    @property
+    def error_class(self):
+        return self.error_code // 100
+
+    @property
+    def error_number(self):
+        return self.error_code % 100
+
+    def create_response(self, request):
+        response = request.create_response(CLASS_RESPONSE_ERROR)
+        from jostedal.stun.attributes import ErrorCode
+        response.add_attr(ErrorCode, self.error_class, self.error_number, self.reason)
+        return response
+
+
+# STUN exceptions:
+class TryAlternateError(Error):
+    error_code = 300
+    reason = "Try Alternate"
+
+class BadRequestError(Error):
+    error_code = 400
+    reason = "Bad Request"
+
+class UnauthorizedError(Error):
+    error_code = 401
+    reason = "Unauthorized"
+
+class UnknownAttributeError(Error):
+    error_code = 420
+    reason = "Unknown Attribute"
+
+    def __init__(self, unknown_attributes):
+        self.unknown_attributes = unknown_attributes
+
+    def create_response(self, request):
+        response = super().create_response(request)
+        from jostedal.stun.attributes import UnknownAttributes
+        response.add_attr(UnknownAttributes, self.unknown_attributes)
+
+class StaleNonceError(Error):
+    error_code = 438
+    reason = "Stale Nonce"
+
+class ServerError(Error):
+    error_code = 500
+    reason = "Server Error"

@@ -53,7 +53,7 @@ class MessageTest(unittest.TestCase):
         )
         msg.add_attr(attributes.Username, "johndoe")
         msg.add_attr(attributes.MessageIntegrity, ha1("username", "realm", "password"))
-        msg.add_attr(attributes.ErrorCode, *stun.ERR_SERVER_ERROR)
+        msg.add_attr(attributes.ErrorCode, 5, 1, "Server Error")
         msg.add_attr(attributes.UnknownAttributes, [0x1337, 0xB00B, 0xBEEF])
         msg.add_attr(attributes.Realm, b"pexip.com")
         msg.add_attr(
