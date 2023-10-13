@@ -48,12 +48,8 @@ class TurnUdpServer(StunUdpServer):
             # TODO: handle allocate retransmission
             raise NotImplementedError("Allocation retransmission")
 
-        generated_username = msg.get_attr(stun.ATTR_USERNAME)
-        self.credential_mechanism.add_key_user(generated_username)
         # 1. require request to be authenticated
-        message_integrity = msg.get_attr(stun.ATTR_MESSAGE_INTEGRITY)
-        if not message_integrity:
-            raise stun.UnauthorizedError()
+        self.credential_mechanism.authenticate(msg)
 
         # 2. Check if the 5-tuple is currently in use
         if relay_allocation:
