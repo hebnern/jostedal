@@ -8,9 +8,9 @@ logger = logging.getLogger(__name__)
 
 
 class StunUdpServer(StunUdpProtocol):
-    def __init__(self, reactor, interface, port, software, overrides=None):
+    def __init__(self, reactor, interface, port, software, overrides={}):
         StunUdpProtocol.__init__(self, reactor, interface, port, software)
-        self.overrides = {} if overrides is None else overrides
+        self.overrides = overrides
 
     def respond(self, response, addr):
         response.add_attr(attributes.Software, self.software)
