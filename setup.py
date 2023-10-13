@@ -1,11 +1,11 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 README = open("README.md", "r").read()
 
 setup(
     name="jostedal",
     version="0.1.0",
-    packages=["jostedal"],
+    packages=find_packages(),
     provides=["jostedal"],
     requires=["Twisted"],
     author="Pexip AS",
